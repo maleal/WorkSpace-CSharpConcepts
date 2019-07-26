@@ -2,6 +2,18 @@
 
 namespace WorkSpace_DependencyInjection
 {
+    /* 
+    * Reviewing Dependencies Injections:
+    *      Ejemplo de Constructor Injection
+    */
+
+    /* Ejemplo 01
+     * 1ro. Creamos la Interface, que define la accion comun que deberán implementar
+            las clases
+     * 2do. Creamos las clases especializadas
+     * 3ro. El consumidor
+     * Nota:Tambien tengo un método (identico a los ejemplos de polimorfismo de C++)
+    */
 
     public interface IArma
     {
@@ -52,6 +64,46 @@ namespace WorkSpace_DependencyInjection
         }
     }
 
+    /*
+     * Ejemplo 02:
+     * Este segundo ejemplo, obliga a todos a enviar un mensaje
+    */
+    public interface INotificar
+    {
+        string EjecutarNotificar(string msg);
+    }
+
+    public class Servidor : INotificar
+    {
+        public string EjecutarNotificar(string msg)
+        {
+            string xx = "Servidor Notifica:";
+            return string.Concat(xx, msg);
+        }
+    }
+
+    public class Impresora : INotificar
+    {
+        public string EjecutarNotificar(string msg)
+        {
+            string xx = "Impresora Notifica:";
+            return string.Concat(xx, msg);
+        }
+    }
+
+    public class Correo
+    {
+        protected INotificar _notificar;
+        public Correo(INotificar notificar)
+        {
+            this._notificar = notificar;
+        }
+
+        public string Notifica(string msg)
+        {
+            return _notificar.EjecutarNotificar(msg);
+        }
+    }
 
     class Program
     {
@@ -61,6 +113,15 @@ namespace WorkSpace_DependencyInjection
             Console.WriteLine("Soldado Dispara: {0}", sold.Dispara());
 
             Console.WriteLine("Soldado Dispara Metodo: {0}", sold.DisparaArgumento(new Escopeta()));
+            Console.ReadKey();
+
+            var correo01 = new Correo(new Servidor());
+
+            Console.WriteLine("Soy correo01: {0}", correo01.Notifica("Soy el Servidor ... Hay que salir Ya!!!"));
+
+            var correo02 = new Correo(new Impresora());
+            Console.WriteLine("Soy correo02: {0}", correo02.Notifica("Soy la Impresora ... No hay mas hojas!!!"));
+
             Console.ReadKey();
 
         }
